@@ -1,22 +1,19 @@
 import express from 'express';
 import { PORT } from './config/dotenv';
-import sequelize from './config/database';
+import authRoutes from './routes/auth';
+import authMiddleware from './middleware/auth';
 
 const app = express();
+app.use(express.json()); // Parse incoming JSON
 
-sequelize.authenticate()
-  .then(() => console.log('Database connected!'))
-  .catch((err) => console.log('Error: ' + err))
+app.use('/auth', authRoutes); // Register authentication routes
 
-// Middleware to parse JSON requests
-app.use(express.json());
-
-// Basic route
-app.get('/', (req, res) => {
-  res.send('Server is running!');
+// Protected route example
+app.get('/protected', authMiddleware, (req, res) => {
+  res.status(200).json({ message: 'Access granted to protected route' });
 });
 
-// Start server
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
