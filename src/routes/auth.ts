@@ -3,6 +3,7 @@ import User from '../models/user';
 
 const router = express.Router();
 
+
 router.post('/register', async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
 
@@ -22,6 +23,7 @@ router.post('/register', async (req: Request, res: Response) => {
   }
 });
 
+
 router.post('/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
@@ -38,7 +40,13 @@ router.post('/login', async (req: Request, res: Response) => {
 
     const token = user.generateAuthToken(); // Generate JWT
 
-    res.status(200).json({ message: 'Login successful', token });
+    const {id, email: userEmail, username} = user
+
+    res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: {id, email: userEmail, username}
+    });
 
   } catch (error) {
     res.status(500).json({ message: 'Error during login', error });
