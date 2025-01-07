@@ -10,7 +10,7 @@ app.use(express.json()); // Parse incoming JSON
 
 app.use(
   cors({
-    origin: 'http://localhost:3000', // Replace with your React app URL
+    origin: 'http://localhost:3000',
     credentials: true, // Allow cookies if required
   })
 );
