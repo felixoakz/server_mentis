@@ -1,0 +1,29 @@
+{
+  "name": "server_mentis",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "serve": "nodemon server.js",
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit push"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "description": "",
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/jwt": "^9.0.3",
+    "@fastify/rate-limit": "^10.2.2",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
+    "fastify": "^5.2.1",
+    "mysql2": "^3.12.0",
+    "nodemon": "^3.1.9"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.30.2",
+    "drizzle-orm": "^0.38.4"
+  }
+}
