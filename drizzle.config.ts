@@ -1,15 +1,13 @@
-import dotenv from "dotenv";
-
-dotenv.config();
+import { constants } from './src/configs/constants';
 
 export default {
-  schema: "./src/models/User.ts",
+  schema: "./src/models/**/*.ts",
   out: "./src/migrations",
   dialect: "mysql",
   dbCredentials: {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    host: constants.db.host,
+    user: constants.db.username,
+    password: constants.db.password,
+    database: constants.db.name,
   },
 };
