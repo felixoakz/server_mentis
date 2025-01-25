@@ -1,4 +1,3 @@
-// app.ts
 import Fastify, { FastifyInstance } from "fastify";
 import fastifyCookie from "@fastify/cookie";
 import fastifyJwt from "@fastify/jwt";
@@ -7,6 +6,7 @@ import authRoute from "./routes/authRoutes";
 import protectedRoute from "./routes/protectedRoutes";
 import { loggingMiddleware } from "./middlewares/loggingMiddleware";
 import { constants } from "./configs/constants";
+import chalk from "chalk";
 
 const fastify: FastifyInstance = Fastify();
 
@@ -34,8 +34,10 @@ fastify.register(protectedRoute, { prefix: "/api" });
 const start = async () => {
   try {
     await fastify.listen({ port: constants.port });
-    console.log(`Server is running on http://localhost:${constants.port}`);
+    console.log(chalk.bgGray(`===> Server is running on http://localhost:${constants.port}`));
+
   } catch (err) {
+    console.log(chalk.bgRed(err))
     fastify.log.error(err);
     process.exit(1);
   }

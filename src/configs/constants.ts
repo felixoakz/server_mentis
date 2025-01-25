@@ -18,7 +18,7 @@ const requiredEnvVars = [
 
 for (const varName of requiredEnvVars) {
   if (!process.env[varName]) {
-    throw new Error(chalk.red.bold(`# Missing required environment variable: ${varName}`));
+    throw new Error(chalk.bgRed.bold(`# Missing required environment variable: ${varName}`));
   }
 }
 
@@ -26,7 +26,7 @@ export const constants = {
 
   //env
   cookieSecret: process.env.COOKIE_SECRET,
-  jwtSecret: process.env.JWT_SECRET,
+  jwtSecret: process.env.JWT_SECRET! || 'default_jwt_secret',
   port: Number(process.env.PORT),
 
   db: {
