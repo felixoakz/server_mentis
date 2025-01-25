@@ -26,7 +26,7 @@ export async function loggingMiddleware(request: FastifyRequest, reply: FastifyR
       methodColor = chalk.white;
   }
   console.log(
-    `# REQUEST => ${chalk.gray(timestamp)} ${methodColor(method)} ${chalk.cyan(url)}`
+    `=> ${chalk.cyanBright('REQUEST')} > ${methodColor(method)} > ${chalk.cyan(url)} | ${chalk.gray(timestamp)} |`
   );
 
   console.log({ reply })
