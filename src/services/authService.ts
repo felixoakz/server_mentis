@@ -1,4 +1,4 @@
-import { db } from "../services/dbService";
+import { db } from "../configs/database";
 import { eq } from "drizzle-orm";
 import { users } from "../models/User";
 import bcrypt from "bcrypt";
