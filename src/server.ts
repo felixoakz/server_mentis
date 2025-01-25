@@ -15,10 +15,7 @@ fastify.register(fastifyCookie, { secret: constants.cookieSecret });
 
 fastify.register(fastifyJwt, {
   secret: constants.jwtSecret,
-  cookie: {
-    cookieName: "token",
-    signed: true,
-  },
+  cookie: { cookieName: "token", signed: true, },
 });
 
 fastify.register(rateLimit, {
