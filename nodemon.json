@@ -1,6 +1,6 @@
 {
   "watch": ["src"],
-  "ext": "js, json",
+  "ext": "ts,json",
   "ignore": ["src/migrations"],
-  "exec": "node src/server.js"
+  "exec": "tsx src/server.ts"
 }

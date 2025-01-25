@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export default {
-  schema: "./src/models/User.js",
+  schema: "./src/models/User.ts",
   out: "./src/migrations",
   dialect: "mysql",
   dbCredentials: {

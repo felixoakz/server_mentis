@@ -1,21 +1,23 @@
-import Fastify from "fastify";
+import Fastify, { FastifyInstance } from "fastify";
 import fastifyCookie from "@fastify/cookie";
 import fastifyJwt from "@fastify/jwt";
 import rateLimit from "@fastify/rate-limit";
-import authRoute from "./routes/authRoutes.js";
-import protectedRoute from "./routes/protectedRoutes.js";
-import { loggingMiddleware } from "./middlewares/loggingMiddleware.js";
+import authRoute from "./routes/authRoutes";
+import protectedRoute from "./routes/protectedRoutes";
+import { loggingMiddleware } from "./middlewares/loggingMiddleware";
 import dotenv from 'dotenv';
 
-const fastify = Fastify();
-
 dotenv.config();
+
+const fastify: FastifyInstance = Fastify();
+
+const jwtSecret = process.env.JWT_SECRET ?? 'jwt_secret';
 
 // Register plugins
 fastify.register(fastifyCookie, { secret: process.env.COOKIE_SECRET });
 
 fastify.register(fastifyJwt, {
-  secret: process.env.JWT_SECRET,
+  secret: jwtSecret,
   cookie: {
     cookieName: "token",
     signed: true,
@@ -30,21 +32,22 @@ fastify.register(rateLimit, {
 // Middleware
 fastify.addHook("onRequest", loggingMiddleware);
 
+
 // Routes
 fastify.register(authRoute, { prefix: "/auth" });
 fastify.register(protectedRoute, { prefix: "/api" });
+
 
 // Start server
 const start = async () => {
   try {
     const port = process.env.PORT ?? 3000;
-    fastify.listen({ port: port });
+    await fastify.listen({ port: Number(port) });
     console.log(`Server is running on http://localhost:${port}`);
 
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
-
   }
 };
 
