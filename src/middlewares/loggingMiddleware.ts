@@ -28,6 +28,4 @@ export async function loggingMiddleware(request: FastifyRequest, reply: FastifyR
   console.log(
     `=> ${chalk.cyanBright('REQUEST')} > ${methodColor(method)} > ${chalk.cyan(url)} | ${chalk.gray(timestamp)} |`
   );
-
-  console.log({ reply })
 }
