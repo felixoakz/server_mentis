@@ -1,13 +1,11 @@
-import { constants } from './src/configs/constants';
+import { defineConfig } from "drizzle-kit";
+import { constants } from './src/configs/constants'
 
-export default {
+export default defineConfig({
   schema: "./src/models/**/*.ts",
   out: "./src/migrations",
-  dialect: "mysql",
+  dialect: "postgresql",
   dbCredentials: {
-    host: constants.db.host,
-    user: constants.db.username,
-    password: constants.db.password,
-    database: constants.db.name,
+    url: constants.db.databaseUrl
   },
-};
+});

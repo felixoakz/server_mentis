@@ -24,6 +24,5 @@ export async function loginHandler(fastify: any, request: FastifyRequest, reply:
 
   } catch (error: any) {
     reply.status(401).send({ error: error.message });
-
   }
 }

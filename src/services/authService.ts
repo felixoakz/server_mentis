@@ -4,18 +4,37 @@ import { users } from "../models/User";
 import bcrypt from "bcrypt";
 import { FastifyInstance } from "fastify";
 
-export async function registerUser(requestBody: { username: string; email: string; password: string }) {
+
+interface RegusterUserObject {
+  username: string;
+  email: string;
+  password: string;
+}
+
+type User = {
+  id: number;
+  username: string;
+  email: string;
+  password: string;
+}
+
+export async function registerUser(requestBody: RegusterUserObject): Promise<User> {
   const { username, email, password } = requestBody;
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const [user] = await db.insert(users).values({ email, username, password: hashedPassword });
+  const [user] = await db.insert(users)
+    .values({ email, username, password: hashedPassword })
+    .returning();
 
   return user;
 }
 
 export async function loginUser(fastify: FastifyInstance, email: string, password: string) {
-  const [user] = await db.select().from(users).where(eq(users.email, email));
+
+  const [user] = await db.select()
+    .from(users)
+    .where(eq(users.email, email));
 
   if (!user) throw new Error("User not found");
 

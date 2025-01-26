@@ -6,11 +6,7 @@ dotenv.config();
 const requiredEnvVars = [
   'COOKIE_SECRET',
   'JWT_SECRET',
-  'DB_HOST',
-  'DB_PORT',
-  'DB_USERNAME',
-  'DB_PASSWORD',
-  'DB_NAME',
+  'DATABASE_URL',
   'RATE_LIMIT_MAX',
   'RATE_LIMIT_TIME_WINDOW',
   'PORT'
@@ -23,22 +19,19 @@ for (const varName of requiredEnvVars) {
 }
 
 export const constants = {
-
-  //env
+  // env
   cookieSecret: process.env.COOKIE_SECRET,
   jwtSecret: process.env.JWT_SECRET! || 'default_jwt_secret',
   port: Number(process.env.PORT),
 
   db: {
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    name: process.env.DB_NAME,
+    databaseUrl: process.env.DATABASE_URL!
   },
 
   rateLimit: {
     max: Number(process.env.RATE_LIMIT_MAX),
     timeWindow: process.env.RATE_LIMIT_TIME_WINDOW,
   },
+
+
 };
