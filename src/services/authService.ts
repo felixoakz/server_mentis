@@ -5,20 +5,17 @@ import bcrypt from "bcrypt";
 import { FastifyInstance } from "fastify";
 
 
-interface RegusterUserObject {
+interface RegisterUserObject {
   username: string;
   email: string;
   password: string;
 }
 
-type User = {
-  id: number;
-  username: string;
-  email: string;
-  password: string;
-}
+type User = typeof users.$inferSelect;
 
-export async function registerUser(requestBody: RegusterUserObject): Promise<User> {
+
+export async function registerUser(requestBody: RegisterUserObject): Promise<User> {
+
   const { username, email, password } = requestBody;
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -39,7 +36,6 @@ export async function loginUser(fastify: FastifyInstance, email: string, passwor
   if (!user) throw new Error("User not found");
 
   const isValid = await bcrypt.compare(password, user.password);
-
   if (!isValid) throw new Error("Invalid password");
 
   return fastify.jwt.sign({ id: user.id });

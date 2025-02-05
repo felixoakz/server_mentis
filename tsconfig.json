@@ -5,11 +5,14 @@
     "moduleResolution": "Node",
     "outDir": "./dist",
     "rootDir": "./src",
+    "removeComments": true,
+    "noEmitOnError": true,
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
