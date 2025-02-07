@@ -1,6 +1,6 @@
 import { db } from "../configs/database";
 import { eq } from "drizzle-orm";
-import { users } from "../models/User";
+import { UserTable } from "../models/User";
 import bcrypt from "bcrypt";
 import { FastifyInstance } from "fastify";
 
@@ -11,7 +11,7 @@ interface RegisterUserObject {
   password: string;
 }
 
-type User = typeof users.$inferSelect;
+type User = typeof UserTable.$inferSelect;
 
 
 export async function registerUser(requestBody: RegisterUserObject): Promise<User> {
@@ -20,7 +20,7 @@ export async function registerUser(requestBody: RegisterUserObject): Promise<Use
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const [user] = await db.insert(users)
+  const [user] = await db.insert(UserTable)
     .values({ email, username, password: hashedPassword })
     .returning();
 
@@ -30,8 +30,8 @@ export async function registerUser(requestBody: RegisterUserObject): Promise<Use
 export async function loginUser(fastify: FastifyInstance, email: string, password: string) {
 
   const [user] = await db.select()
-    .from(users)
-    .where(eq(users.email, email));
+    .from(UserTable)
+    .where(eq(UserTable.email, email));
 
   if (!user) throw new Error("User not found");
 
