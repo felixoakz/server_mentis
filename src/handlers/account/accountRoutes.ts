@@ -1,4 +1,4 @@
-import { createAccount } from "./accountController";
+import { createAccount } from "./accountHandler";
 import { authMiddleware } from "../../middlewares/authMiddleware";
 import { FastifyInstance } from "fastify";
 
