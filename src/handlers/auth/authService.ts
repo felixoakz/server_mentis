@@ -1,6 +1,6 @@
-import { db } from "../configs/database";
+import { db } from "../../configs/database";
 import { eq } from "drizzle-orm";
-import { UserTable } from "../models/User";
+import { UserTable } from "../../models/User";
 import bcrypt from "bcrypt";
 import { FastifyInstance } from "fastify";
 

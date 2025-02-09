@@ -2,11 +2,11 @@ import Fastify, { FastifyInstance } from "fastify";
 import fastifyCookie from "@fastify/cookie";
 import fastifyJwt from "@fastify/jwt";
 import rateLimit from "@fastify/rate-limit";
-import authRoute from "./routes/authRoutes";
-import protectedRoute from "./routes/protectedRoutes";
+import authRoute from "./handlers/auth/authRoutes";
 import { loggingMiddleware } from "./middlewares/loggingMiddleware";
 import { constants } from "./configs/constants";
 import chalk from "chalk";
+import accountRoute from "./handlers/account/accountRoutes";
 
 const fastify: FastifyInstance = Fastify();
 
@@ -28,13 +28,13 @@ fastify.addHook("onRequest", loggingMiddleware);
 
 // Routes
 fastify.register(authRoute, { prefix: "/auth" });
-fastify.register(protectedRoute, { prefix: "/api" });
+fastify.register(accountRoute, { prefix: "/api" });
 
 // Start server
 const start = async () => {
   try {
     await fastify.listen({ port: constants.port });
-    console.log(chalk.bgGray(`===> Server is running on http://localhost:${constants.port}`));
+    console.log(chalk.bgGray(`\n===> Server is running on http://localhost:${constants.port}`));
 
   } catch (err) {
     console.log(chalk.bgRed(err))
