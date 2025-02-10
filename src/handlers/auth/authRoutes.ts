@@ -1,4 +1,4 @@
-import { authLogin, authRegister } from "./authHandler";
+import { authLogin, authRegister } from "./authHandlers";
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 
 export default async function authRoute(fastify: FastifyInstance) {
