@@ -2,11 +2,13 @@ import Fastify, { FastifyInstance } from "fastify";
 import fastifyCookie from "@fastify/cookie";
 import fastifyJwt from "@fastify/jwt";
 import rateLimit from "@fastify/rate-limit";
-import authRoute from "./handlers/auth/authRoutes";
-import { loggingMiddleware } from "./middlewares/loggingMiddleware";
-import { constants } from "./configs/constants";
 import chalk from "chalk";
-import accountRoute from "./handlers/account/accountRoutes";
+
+import { loggingMiddleware } from "./middlewares/loggingMiddleware";
+import { constants } from "configs/constants";
+import accountRoute from "handlers/account/accountRoutes";
+import authRoute from "./handlers/auth/authRoutes";
+
 
 const fastify: FastifyInstance = Fastify();
 

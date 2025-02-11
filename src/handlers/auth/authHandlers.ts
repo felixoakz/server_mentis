@@ -1,21 +1,12 @@
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
-import { UserTable } from "../../models/User";
-import { db } from "../../configs/database";
+import { UserTable } from "models/User";
+import { db } from "configs/database";
 import { eq } from "drizzle-orm";
 import bcrypt from 'bcrypt';
+import { RegisterUserObject } from "types/userTypes";
 
 
-interface RegisterUserObject {
-  username: string;
-  email: string;
-  password: string;
-}
-
-
-export async function authRegister(
-  request: FastifyRequest,
-  reply: FastifyReply
-): Promise<void> {
+export async function authRegister(request: FastifyRequest, reply: FastifyReply): Promise<void> {
 
   try {
     const { username, email, password } = request.body as RegisterUserObject;
@@ -41,12 +32,9 @@ export async function authRegister(
 }
 
 
-export async function authLogin(
-  fastify: FastifyInstance,
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+export async function authLogin(request: FastifyRequest, reply: FastifyReply) {
 
+  const fastify = request.server as FastifyInstance;
   const { email, password } = request.body as { email: string; password: string };
 
   try {

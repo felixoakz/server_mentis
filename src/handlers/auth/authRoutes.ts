@@ -1,9 +1,9 @@
 import { authLogin, authRegister } from "./authHandlers";
-import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
+import { FastifyInstance } from "fastify";
 
 export default async function authRoute(fastify: FastifyInstance) {
 
   fastify.post("/register", authRegister);
-  fastify.post("/login", (req: FastifyRequest, reply: FastifyReply) => authLogin(fastify, req, reply));
+  fastify.post("/login", authLogin);
 
 }
