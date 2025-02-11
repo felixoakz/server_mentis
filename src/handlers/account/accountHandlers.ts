@@ -1,40 +1,43 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { db } from "../../configs/database";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { AccountTable } from "../../models/Account";
 
+interface UserFromCookie {
+  id: string,
+  iat: number,
+}
+
 export async function createAccount(request: FastifyRequest, reply: FastifyReply) {
-
   try {
-    const { name } = request.body as { name?: string };
-    const userId = request.user.id
+    const { accountName } = request.body as { accountName?: string }
+    const user = request.user as UserFromCookie
 
-    console.log(userId)
-
-    if (!name || name.trim() === '')
+    if (!accountName || accountName.trim() === '')
       throw new Error("Account name is required")
 
     const existingAccount = await db
       .select()
       .from(AccountTable)
-      .where(eq(AccountTable.user_id, userId))
-      .where(eq(AccountTable.name, name));
+      .where(
+        and(
+          eq(AccountTable.user_id, user.id),
+          eq(AccountTable.name, accountName)
+        )
+      );
 
     if (existingAccount.length > 0)
       throw new Error("Account name already exists")
 
     const [newAccount] = await db
       .insert(AccountTable)
-      .values({ user_id: userId, name })
+      .values({ user_id: user.id, name: accountName })
       .returning()
 
     return reply.status(201).send(newAccount);
 
-  } catch (e) {
-    console.log(e)
-
+  } catch (error: any) {
+    reply.status(400).send({ error: error.message });
+    console.log(error)
   }
-
-
-  reply.send({ message: "This is a protected route", user: request.user });
 }

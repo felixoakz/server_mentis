@@ -5,5 +5,5 @@ import { FastifyInstance } from "fastify";
 export default async function accountRoute(fastify: FastifyInstance) {
   fastify.addHook("onRequest", authMiddleware);
 
-  fastify.post("/accounts", createAccount);
+  fastify.post("/create-account", createAccount);
 }
