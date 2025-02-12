@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { db } from "configs/database";
 import { and, eq } from "drizzle-orm";
+
 import { AccountTable } from "models/Account";
 import { UserFromCookie } from "types/userTypes";
 

@@ -8,6 +8,7 @@ import { loggingMiddleware } from "./middlewares/loggingMiddleware";
 import { constants } from "configs/constants";
 import accountRoute from "handlers/account/accountRoutes";
 import authRoute from "./handlers/auth/authRoutes";
+import transactionRoute from "handlers/transaction/transactionRoutes";
 
 
 const fastify: FastifyInstance = Fastify();
@@ -31,6 +32,7 @@ fastify.addHook("onRequest", loggingMiddleware);
 // Routes
 fastify.register(authRoute, { prefix: "/auth" });
 fastify.register(accountRoute, { prefix: "/api" });
+fastify.register(transactionRoute, {prefix: "/api"});
 
 // Start server
 const start = async () => {
