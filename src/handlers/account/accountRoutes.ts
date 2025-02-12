@@ -5,7 +5,7 @@ import { createAccount, listAccounts, updateAccount, deleteAccount } from "./acc
 export default async function accountRoute(fastify: FastifyInstance) {
   fastify.addHook("onRequest", authMiddleware);
 
-  fastify.post("/create-account", createAccount);
+  fastify.post("/account-create", createAccount);
   fastify.get("/accounts", listAccounts);
   fastify.put("/accounts/:accountId", updateAccount);
   fastify.delete("/accounts/:accountId", deleteAccount);
