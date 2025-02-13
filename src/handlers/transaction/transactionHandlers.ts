@@ -47,3 +47,23 @@ export async function createTransaction(request: FastifyRequest, reply: FastifyR
 		}
 	}
 }
+
+export async function listTransactions(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+	try {
+		const user = request.user as UserFromCookie
+
+		const transactions = await db
+			.select()
+			.from(TransactionTable)
+			.where(eq(TransactionTable.user_id, user.id))
+
+		return reply.send(transactions)
+
+	} catch (error) {
+		if (error instanceof Error) {
+			reply.status(400).send({ error: error.message })
+		} else {
+			reply.status(500).send({ error: "An unexpected error occurred" })
+		}
+	}
+}
