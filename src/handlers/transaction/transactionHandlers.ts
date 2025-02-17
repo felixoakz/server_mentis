@@ -2,7 +2,7 @@ import { desc, eq } from "drizzle-orm";
 import { FastifyReply, FastifyRequest } from "fastify";
 
 import { TransactionTable } from "models/Transaction";
-import { TransactionCreationObject } from "types/transactionTypes";
+import { TransactionCreationObject, TransactionUpdateObject } from "types/transactionTypes";
 import { db } from "configs/database";
 import { UserFromCookie } from "types/userTypes";
 
@@ -58,6 +58,37 @@ export async function listTransactions(request: FastifyRequest, reply: FastifyRe
 			.where(eq(TransactionTable.user_id, user.id))
 
 		return reply.send(transactions)
+
+	} catch (error) {
+		if (error instanceof Error) {
+			reply.status(400).send({ error: error.message })
+		} else {
+			reply.status(500).send({ error: "An unexpected error occurred" })
+		}
+	}
+}
+
+export async function updateTransaction(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+	try {
+		const { transactionId } = request.params as { transactionId: string }
+		const { amount, description } = request.body as TransactionUpdateObject
+
+		if (!amount) throw new Error("Transaction name is required")
+
+		const [existingTransaction] = await db
+			.select()
+			.from(TransactionTable)
+			.where(eq(TransactionTable.id, transactionId))
+
+		if (!existingTransaction) throw new Error("Transaction not Found")
+
+		const [updatedTransaction] = await db
+			.update(TransactionTable)
+			.set({ amount: amount, description: description })
+			.where(eq(TransactionTable.id, transactionId))
+			.returning()
+
+		return reply.status(200).send({ updatedTransaction })
 
 	} catch (error) {
 		if (error instanceof Error) {

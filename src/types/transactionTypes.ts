@@ -3,3 +3,8 @@ export type TransactionCreationObject = {
   amount: number,
   description?: string
 }
+
+export type TransactionUpdateObject = {
+  amount: number,
+  description?: string
+}

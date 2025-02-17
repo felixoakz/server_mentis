@@ -2,7 +2,8 @@ CREATE TABLE "account" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
 	"name" varchar(255) NOT NULL,
-	"created_at" timestamp DEFAULT now(),
+	"balance" bigint DEFAULT 0,
+	"created_at" timestamp with time zone DEFAULT now(),
 	"updated_at" timestamp DEFAULT now(),
 	CONSTRAINT "account_user_id_name_unique" UNIQUE("user_id","name")
 );
@@ -12,7 +13,6 @@ CREATE TABLE "transaction" (
 	"account_id" uuid NOT NULL,
 	"user_id" uuid NOT NULL,
 	"amount" bigint NOT NULL,
-	"balance_after" bigint NOT NULL,
 	"description" varchar(255),
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()

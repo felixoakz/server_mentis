@@ -1,5 +1,5 @@
 {
-  "id": "3482f2ea-1b7c-4e4e-ae4e-a93e9a714fd2",
+  "id": "e8a78533-d23d-4f96-b199-62fd8e46d6f8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -27,9 +27,16 @@
           "primaryKey": false,
           "notNull": true
         },
+        "balance": {
+          "name": "balance",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
@@ -98,12 +105,6 @@
         },
         "amount": {
           "name": "amount",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "balance_after": {
-          "name": "balance_after",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true

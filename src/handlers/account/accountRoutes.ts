@@ -8,6 +8,6 @@ export default async function accountRoute(fastify: FastifyInstance) {
 
   fastify.post("/accounts", createAccount);
   fastify.get("/accounts", listAccounts);
-  fastify.put("/accounts/:accountId", updateAccount);
-  fastify.delete("/accounts/:accountId", deleteAccount);
+  fastify.put("/accounts/:id", updateAccount);
+  fastify.delete("/accounts/:id", deleteAccount);
 }

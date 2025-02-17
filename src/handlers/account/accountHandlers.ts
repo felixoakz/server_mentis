@@ -2,17 +2,16 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { db } from "configs/database";
 import { and, eq } from "drizzle-orm";
 
-import { AccountTable } from "models/Account";
+import { AccountInsertType, AccountSelectType, AccountTable } from "models/Account";
 import { UserFromCookie } from "types/userTypes";
 
 
 export async function createAccount(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const { accountName } = request.body as { accountName: string }
+    const { name, balance } = request.body as Pick<AccountInsertType, "name" | "balance">
     const user = request.user as UserFromCookie
 
-    if (!accountName || accountName.trim() === '')
-      throw new Error("Account name is required")
+    if (!name || name.trim() === '') throw new Error("Account name is required")
 
     const existingAccount = await db
       .select()
@@ -20,7 +19,7 @@ export async function createAccount(request: FastifyRequest, reply: FastifyReply
       .where(
         and(
           eq(AccountTable.user_id, user.id),
-          eq(AccountTable.name, accountName)
+          eq(AccountTable.name, name)
         )
       );
 
@@ -29,7 +28,7 @@ export async function createAccount(request: FastifyRequest, reply: FastifyReply
 
     const [newAccount] = await db
       .insert(AccountTable)
-      .values({ user_id: user.id, name: accountName })
+      .values({ user_id: user.id, name, balance: balance ?? 0 })
       .returning()
 
     return reply.status(201).send(newAccount);
@@ -65,34 +64,22 @@ export async function listAccounts(request: FastifyRequest, reply: FastifyReply)
 
 export async function updateAccount(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const { accountName } = request.body as { accountName: string }
-    const { accountId } = request.params as { accountId: string };
-    const user = request.user as UserFromCookie;
+    const { name } = request.body as Pick<AccountInsertType, "name">
+    const { id } = request.params as Pick<AccountSelectType, "id">;
 
-    if (!accountName || accountName.trim() === "")
-      throw new Error("Account name is required");
+    if (!name || name.trim() === "") throw new Error("Account name is required");
 
     const [existingAccount] = await db
       .select()
       .from(AccountTable)
-      .where(
-        and(
-          eq(AccountTable.id, accountId),
-          eq(AccountTable.user_id, user.id)
-        )
-      );
+      .where(eq(AccountTable.id, id));
 
     if (!existingAccount) throw new Error("Account not found");
 
     const [updatedAccount] = await db
       .update(AccountTable)
-      .set({ name: accountName })
-      .where(
-        and(
-          eq(AccountTable.id, accountId),
-          eq(AccountTable.user_id, user.id)
-        )
-      )
+      .set({ name })
+      .where(eq(AccountTable.id, id))
       .returning();
 
     return reply.status(200).send(updatedAccount);
@@ -108,27 +95,18 @@ export async function updateAccount(request: FastifyRequest, reply: FastifyReply
 
 export async function deleteAccount(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const { accountId } = request.params as { accountId: string };
-    const user = request.user as UserFromCookie;
+    const { id } = request.params as Pick<AccountSelectType, "id">;
 
     const [existingAccount] = await db
       .select()
       .from(AccountTable)
-      .where(
-        and(
-          eq(AccountTable.id, accountId),
-          eq(AccountTable.user_id, user.id)
-        )
-      );
+      .where(eq(AccountTable.id, id));
 
     if (!existingAccount) throw new Error("Account not found");
 
-    await db.delete(AccountTable).where(
-      and(
-        eq(AccountTable.id, accountId),
-        eq(AccountTable.user_id, user.id)
-      )
-    );
+    await db
+      .delete(AccountTable)
+      .where(eq(AccountTable.id, id));
 
     return reply.status(204).send();
 
