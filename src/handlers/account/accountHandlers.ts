@@ -2,13 +2,13 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { db } from "configs/database";
 import { and, eq } from "drizzle-orm";
 
-import { AccountInsertType, AccountSelectType, AccountTable } from "models/Account";
+import { AccountSelectType, AccountTable } from "models/Account";
 import { UserFromCookie } from "types/userTypes";
 
 
 export async function createAccount(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const { name, balance } = request.body as Pick<AccountInsertType, "name" | "balance">
+    const { name, balance } = request.body as Pick<AccountSelectType, "name" | "balance">
     const user = request.user as UserFromCookie
 
     if (!name || name.trim() === '') throw new Error("Account name is required")
@@ -64,7 +64,7 @@ export async function listAccounts(request: FastifyRequest, reply: FastifyReply)
 
 export async function updateAccount(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const { name } = request.body as Pick<AccountInsertType, "name">
+    const { name } = request.body as Pick<AccountSelectType, "name">
     const { id } = request.params as Pick<AccountSelectType, "id">;
 
     if (!name || name.trim() === "") throw new Error("Account name is required");
