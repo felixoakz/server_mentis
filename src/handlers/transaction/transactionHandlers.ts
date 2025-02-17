@@ -118,3 +118,31 @@ export async function updateTransaction(request: FastifyRequest, reply: FastifyR
 	}
 }
 
+export async function deleteTransaction(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+	try {
+		const { id } = request.params as Pick<TransactionSelectType, "id">;
+
+		const [transaction] = await db
+			.select({ amount: TransactionTable.amount, account_id: TransactionTable.account_id })
+			.from(TransactionTable)
+			.where(eq(TransactionTable.id, id));
+
+		if (!transaction) throw new Error("Transaction not found");
+
+		await db.delete(TransactionTable).where(eq(TransactionTable.id, id));
+
+		await db
+			.update(AccountTable)
+			.set({ balance: sql`${AccountTable.balance} - ${transaction.amount}` })
+			.where(eq(AccountTable.id, transaction.account_id));
+
+		return reply.status(200).send({ message: "Transaction deleted successfully" });
+
+	} catch (error) {
+		if (error instanceof Error) {
+			reply.status(400).send({ error: error.message });
+		} else {
+			reply.status(500).send({ error: "An unexpected error occurred" });
+		}
+	}
+}

@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 
 import { authMiddleware } from "middlewares/authMiddleware";
-import { createTransaction, listTransactions, updateTransaction } from "handlers/transaction/transactionHandlers";
+import { createTransaction, deleteTransaction, listTransactions, updateTransaction } from "handlers/transaction/transactionHandlers";
 
 
 export default async function transactionRoute(fastify: FastifyInstance) {
@@ -10,4 +10,5 @@ export default async function transactionRoute(fastify: FastifyInstance) {
 	fastify.post("/transactions", createTransaction)
 	fastify.get("/transactions", listTransactions)
 	fastify.put("/transactions/:id", updateTransaction)
+	fastify.delete("/transactions/:id", deleteTransaction)
 }
