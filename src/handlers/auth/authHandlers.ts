@@ -1,15 +1,14 @@
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
-import { UserTable } from "models/User";
+import { UserSelectType, UserTable } from "models/User";
 import { db } from "configs/database";
 import { eq } from "drizzle-orm";
 import bcrypt from 'bcrypt';
-import { RegisterUserObject } from "types/userTypes";
 
 
 export async function authRegister(request: FastifyRequest, reply: FastifyReply): Promise<void> {
 
   try {
-    const { username, email, password } = request.body as RegisterUserObject;
+    const { username, email, password } = request.body as Pick<UserSelectType, "username" | "email" | "password">
 
     if (!username || !email || !password)
       throw new Error('Username, email, and password are required');
@@ -35,7 +34,7 @@ export async function authRegister(request: FastifyRequest, reply: FastifyReply)
 export async function authLogin(request: FastifyRequest, reply: FastifyReply) {
 
   const fastify = request.server as FastifyInstance;
-  const { email, password } = request.body as { email: string; password: string };
+  const { email, password } = request.body as Pick<UserSelectType, "email" | "password">
 
   try {
     const [user] = await db.select()
