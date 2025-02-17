@@ -31,7 +31,7 @@ export async function createAccount(request: FastifyRequest, reply: FastifyReply
       .values({ user_id: user.id, name, balance: balance ?? 0 })
       .returning()
 
-    return reply.status(201).send(newAccount);
+    return reply.status(201).send({ newAccount });
 
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -51,7 +51,7 @@ export async function listAccounts(request: FastifyRequest, reply: FastifyReply)
       .from(AccountTable)
       .where(eq(AccountTable.user_id, user.id));
 
-    return reply.status(200).send(accounts);
+    return reply.status(200).send({ accounts });
 
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -82,7 +82,7 @@ export async function updateAccount(request: FastifyRequest, reply: FastifyReply
       .where(eq(AccountTable.id, id))
       .returning();
 
-    return reply.status(200).send(updatedAccount);
+    return reply.status(200).send({ updatedAccount });
 
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -108,7 +108,7 @@ export async function deleteAccount(request: FastifyRequest, reply: FastifyReply
       .delete(AccountTable)
       .where(eq(AccountTable.id, id));
 
-    return reply.status(204).send();
+    return reply.status(200).send({ message: "Account deleted successfully" });
 
   } catch (error: unknown) {
     if (error instanceof Error) {

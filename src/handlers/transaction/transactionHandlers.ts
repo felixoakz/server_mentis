@@ -61,7 +61,7 @@ export async function listTransactions(request: FastifyRequest, reply: FastifyRe
 			.from(TransactionTable)
 			.where(eq(TransactionTable.user_id, user.id))
 
-		return reply.send(transactions)
+		return reply.send({ transactions })
 
 	} catch (error) {
 		if (error instanceof Error) {
