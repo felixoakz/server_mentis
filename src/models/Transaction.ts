@@ -11,3 +11,6 @@ export const TransactionTable = pgTable("transaction", {
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow().$onUpdateFn(() => new Date()),
 });
+
+export type TransactionInsertType = typeof TransactionTable.$inferInsert
+export type TransactionSelectType = typeof TransactionTable.$inferSelect

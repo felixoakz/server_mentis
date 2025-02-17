@@ -9,5 +9,5 @@ export default async function transactionRoute(fastify: FastifyInstance) {
 
 	fastify.post("/transactions", createTransaction)
 	fastify.get("/transactions", listTransactions)
-	fastify.put("/transactions/:transactionId", updateTransaction)
+	fastify.put("/transactions/:id", updateTransaction)
 }

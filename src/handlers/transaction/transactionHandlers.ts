@@ -1,43 +1,47 @@
-import { desc, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { TransactionTable } from "models/Transaction";
-import { TransactionCreationObject, TransactionUpdateObject } from "types/transactionTypes";
+import { TransactionSelectType, TransactionTable } from "models/Transaction";
+import { AccountTable } from "models/Account";
 import { db } from "configs/database";
 import { UserFromCookie } from "types/userTypes";
 
 
+type TransactionUpdateType = Pick<TransactionSelectType, "account_id" | "amount" | "description">
+
 export async function createTransaction(request: FastifyRequest, reply: FastifyReply): Promise<void> {
 	try {
 		const user = request.user as UserFromCookie
-		const { accountId, amount, description } = request.body as TransactionCreationObject;
+		const { account_id, amount, description } = request.body as TransactionUpdateType
 
-		if (!accountId || !amount)
-			throw new Error("Missing required fields account id and ammount")
+		if (!account_id || !amount)
+			throw new Error("Missing required fields account id and/or amount")
 
-		const [lastTransaction] = await db
-			.select({ balanceAfter: TransactionTable.balance_after })
-			.from(TransactionTable)
-			.where(eq(TransactionTable.account_id, accountId))
-			.orderBy(desc(TransactionTable.created_at))
+		const [currentBalance] = await db
+			.select({ balance: AccountTable.balance })
+			.from(AccountTable)
+			.where(eq(AccountTable.id, account_id))
 			.limit(1)
-			.execute();
 
-		const lastBalance = lastTransaction?.balanceAfter ?? 0
-		const balanceAfter = lastBalance + (amount)
+		const balanceAfter = (currentBalance?.balance ?? 0) + amount
 
 		const [newTransaction] = await db
 			.insert(TransactionTable)
 			.values({
-				account_id: accountId,
+				account_id: account_id,
 				user_id: user.id,
 				amount: amount,
-				balance_after: balanceAfter,
 				description: description
 			})
 			.returning()
 
-		return reply.status(201).send(newTransaction)
+		const [newBalance] = await db
+			.update(AccountTable)
+			.set({ balance: balanceAfter })
+			.where(eq(AccountTable.id, account_id))
+			.returning()
+
+		return reply.status(201).send({newTransaction, newBalance})
 
 	} catch (error: unknown) {
 		if (error instanceof Error) {
