@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 
 import { authMiddleware } from "middlewares/authMiddleware";
-import { createAccount, listAccounts, updateAccount, deleteAccount } from "handlers/account/accountHandlers";
+import { createAccount, listAccounts, updateAccount, deleteAccount } from "modules/account/accountHandlers";
 
 export default async function accountRoute(fastify: FastifyInstance) {
   fastify.addHook("onRequest", authMiddleware);

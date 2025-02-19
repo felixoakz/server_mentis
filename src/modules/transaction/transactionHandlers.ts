@@ -4,7 +4,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { TransactionSelectType, TransactionTable } from "models/Transaction";
 import { AccountTable } from "models/Account";
 import { db } from "configs/database";
-import { UserFromCookie } from "types/userTypes";
+import { UserFromCookie } from "utils/types";
 
 
 export async function createTransaction(request: FastifyRequest, reply: FastifyReply): Promise<void> {

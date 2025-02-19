@@ -3,7 +3,7 @@ import { db } from "configs/database";
 import { and, eq } from "drizzle-orm";
 
 import { AccountSelectType, AccountTable } from "models/Account";
-import { UserFromCookie } from "types/userTypes";
+import { UserFromCookie } from "utils/types";
 
 
 export async function createAccount(request: FastifyRequest, reply: FastifyReply) {
