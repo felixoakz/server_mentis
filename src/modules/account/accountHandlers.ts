@@ -4,6 +4,7 @@ import { and, eq } from "drizzle-orm";
 
 import { AccountSelectType, AccountTable } from "models/Account";
 import { UserFromCookie } from "utils/types";
+import { BadRequestError, handleError, NotFoundError, ValidationError } from "utils/errorHandler";
 
 
 export async function createAccount(request: FastifyRequest, reply: FastifyReply) {
@@ -11,7 +12,7 @@ export async function createAccount(request: FastifyRequest, reply: FastifyReply
     const { name, balance } = request.body as Pick<AccountSelectType, "name" | "balance">
     const user = request.user as UserFromCookie
 
-    if (!name || name.trim() === '') throw new Error("Account name is required")
+    if (!name || name.trim() === '') throw ValidationError("Account name is required")
 
     const existingAccount = await db
       .select()
@@ -23,8 +24,7 @@ export async function createAccount(request: FastifyRequest, reply: FastifyReply
         )
       );
 
-    if (existingAccount.length > 0)
-      throw new Error("Account name already exists")
+    if (existingAccount.length > 0) throw BadRequestError("Account name already exists")
 
     const [newAccount] = await db
       .insert(AccountTable)
@@ -33,12 +33,8 @@ export async function createAccount(request: FastifyRequest, reply: FastifyReply
 
     return reply.status(201).send({ newAccount });
 
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      reply.status(400).send({ error: error.message });
-    } else {
-      reply.status(500).send({ error: "An unexpected error occurred" });
-    }
+  } catch (error) {
+    handleError(error, reply);
   }
 }
 
@@ -53,12 +49,8 @@ export async function listAccounts(request: FastifyRequest, reply: FastifyReply)
 
     return reply.status(200).send({ accounts });
 
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      reply.status(400).send({ error: error.message });
-    } else {
-      reply.status(500).send({ error: "An unexpected error occurred" });
-    }
+  } catch (error) {
+    handleError(error, reply);
   }
 }
 
@@ -67,14 +59,14 @@ export async function updateAccount(request: FastifyRequest, reply: FastifyReply
     const { name } = request.body as Pick<AccountSelectType, "name">
     const { id } = request.params as Pick<AccountSelectType, "id">;
 
-    if (!name || name.trim() === "") throw new Error("Account name is required");
+    if (!name || name.trim() === "") throw ValidationError("Account name is required");
 
     const [existingAccount] = await db
       .select()
       .from(AccountTable)
       .where(eq(AccountTable.id, id));
 
-    if (!existingAccount) throw new Error("Account not found");
+    if (!existingAccount) throw NotFoundError("Account not found");
 
     const [updatedAccount] = await db
       .update(AccountTable)
@@ -84,12 +76,8 @@ export async function updateAccount(request: FastifyRequest, reply: FastifyReply
 
     return reply.status(200).send({ updatedAccount });
 
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      reply.status(400).send({ error: error.message });
-    } else {
-      reply.status(500).send({ error: "An unexpected error occurred" });
-    }
+  } catch (error) {
+    handleError(error, reply);
   }
 }
 
@@ -102,7 +90,7 @@ export async function deleteAccount(request: FastifyRequest, reply: FastifyReply
       .from(AccountTable)
       .where(eq(AccountTable.id, id));
 
-    if (!existingAccount) throw new Error("Account not found");
+    if (!existingAccount) throw NotFoundError("Account not found");
 
     await db
       .delete(AccountTable)
@@ -110,11 +98,7 @@ export async function deleteAccount(request: FastifyRequest, reply: FastifyReply
 
     return reply.status(200).send({ message: "Account deleted successfully" });
 
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      reply.status(400).send({ error: error.message });
-    } else {
-      reply.status(500).send({ error: "An unexpected error occurred" });
-    }
+  } catch (error) {
+    handleError(error, reply);
   }
 }

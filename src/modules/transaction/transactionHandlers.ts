@@ -5,6 +5,7 @@ import { TransactionSelectType, TransactionTable } from "models/Transaction";
 import { AccountTable } from "models/Account";
 import { db } from "configs/database";
 import { UserFromCookie } from "utils/types";
+import { handleError, NotFoundError, ValidationError } from "utils/errorHandler";
 
 
 export async function createTransaction(request: FastifyRequest, reply: FastifyReply): Promise<void> {
@@ -15,7 +16,7 @@ export async function createTransaction(request: FastifyRequest, reply: FastifyR
 
 
 		if (!account_id || !amount)
-			throw new Error("Missing required fields account id and/or amount")
+			throw ValidationError("Missing required fields account id and/or amount")
 
 		const [currentBalance] = await db
 			.select({ balance: AccountTable.balance })
@@ -43,12 +44,8 @@ export async function createTransaction(request: FastifyRequest, reply: FastifyR
 
 		return reply.status(201).send({ newTransaction, newBalance })
 
-	} catch (error: unknown) {
-		if (error instanceof Error) {
-			reply.status(400).send({ error: error.message })
-		} else {
-			reply.status(500).send({ error: "An unexpected error occurred" })
-		}
+	} catch (error) {
+		handleError(error, reply);
 	}
 }
 
@@ -64,21 +61,17 @@ export async function listTransactions(request: FastifyRequest, reply: FastifyRe
 		return reply.send({ transactions })
 
 	} catch (error) {
-		if (error instanceof Error) {
-			reply.status(400).send({ error: error.message })
-		} else {
-			reply.status(500).send({ error: "An unexpected error occurred" })
-		}
+		handleError(error, reply);
 	}
 }
 
 export async function updateTransaction(request: FastifyRequest, reply: FastifyReply): Promise<void> {
 	try {
 		const { id } = request.params as Pick<TransactionSelectType, "id">
-		const { amount, description } = request.body as Partial<Pick<TransactionSelectType, "amount" | "description">>;
+		const { amount, description } = request.body as Partial<Pick<TransactionSelectType, "amount" | "description">> || {};
 
 		if (amount === undefined && description === undefined) {
-			throw new Error("At least one field (amount or description) must be provided");
+			throw ValidationError("At least one field (amount or description) must be provided");
 		}
 
 		const [existingTransaction] = await db
@@ -86,7 +79,7 @@ export async function updateTransaction(request: FastifyRequest, reply: FastifyR
 			.from(TransactionTable)
 			.where(eq(TransactionTable.id, id));
 
-		if (!existingTransaction) throw new Error("Transaction not found");
+		if (!existingTransaction) throw NotFoundError("Transaction not found");
 
 		const updateData: Partial<TransactionSelectType> = {};
 		if (amount !== undefined) updateData.amount = amount;
@@ -110,11 +103,7 @@ export async function updateTransaction(request: FastifyRequest, reply: FastifyR
 		return reply.status(200).send({ updatedTransaction });
 
 	} catch (error) {
-		if (error instanceof Error) {
-			reply.status(400).send({ error: error.message });
-		} else {
-			reply.status(500).send({ error: "An unexpected error occurred" });
-		}
+		handleError(error, reply);
 	}
 }
 
@@ -127,7 +116,7 @@ export async function deleteTransaction(request: FastifyRequest, reply: FastifyR
 			.from(TransactionTable)
 			.where(eq(TransactionTable.id, id));
 
-		if (!transaction) throw new Error("Transaction not found");
+		if (!transaction) throw NotFoundError("Transaction not found");
 
 		await db.delete(TransactionTable).where(eq(TransactionTable.id, id));
 
@@ -139,10 +128,6 @@ export async function deleteTransaction(request: FastifyRequest, reply: FastifyR
 		return reply.status(200).send({ message: "Transaction deleted successfully" });
 
 	} catch (error) {
-		if (error instanceof Error) {
-			reply.status(400).send({ error: error.message });
-		} else {
-			reply.status(500).send({ error: "An unexpected error occurred" });
-		}
+		handleError(error, reply);
 	}
 }
