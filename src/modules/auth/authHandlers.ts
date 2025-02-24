@@ -38,21 +38,24 @@ export async function authLogin(request: FastifyRequest, reply: FastifyReply) {
   const { email, password } = request.body as Pick<UserSelectType, "email" | "password">
 
   try {
-    const [user] = await db.select()
+    const [existingUser] = await db.select()
       .from(UserTable)
       .where(eq(UserTable.email, email));
 
-    if (!user)
-      throw NotFoundError("User not found");
+    if (!existingUser) throw NotFoundError("User not found");
 
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid)
-      throw ValidationError("Invalid password");
+    const isValid = await bcrypt.compare(password, existingUser.password);
 
-    const token = fastify.jwt.sign({ id: user.id });
+    if (!isValid) throw ValidationError("Invalid password");
+
+    const { id, username } = existingUser;
+
+    const user: Pick<UserSelectType, "id" | "username"> = { id, username };
+
+    const token = fastify.jwt.sign({ id: existingUser.id });
 
     reply.setCookie("token", token, { httpOnly: true, signed: true, path: "/" });
-    reply.send({ message: "Logged in" });
+    reply.send({ message: "Logged in", user });
 
   } catch (error) {
     handleError(error, reply);
