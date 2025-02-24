@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { FastifyReply, FastifyRequest } from "fastify";
 
 import { TransactionSelectType, TransactionTable } from "models/Transaction";
@@ -52,11 +52,18 @@ export async function createTransaction(request: FastifyRequest, reply: FastifyR
 export async function listTransactions(request: FastifyRequest, reply: FastifyReply): Promise<void> {
 	try {
 		const user = request.user as UserFromCookie
+		const { accountId } = request.params as { accountId: string }
+
+		if (!accountId) throw ValidationError("Account Id is required");
 
 		const transactions = await db
 			.select()
 			.from(TransactionTable)
-			.where(eq(TransactionTable.user_id, user.id))
+			.where(
+				and(
+					eq(TransactionTable.user_id, user.id),
+					eq(TransactionTable.account_id, accountId)
+				))
 
 		return reply.send({ transactions })
 

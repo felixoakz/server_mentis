@@ -8,7 +8,7 @@ export default async function transactionRoute(fastify: FastifyInstance) {
 	fastify.addHook("onRequest", authMiddleware)
 
 	fastify.post("/transactions", createTransaction)
-	fastify.get("/transactions", listTransactions)
+	fastify.get("/transactions/:accountId", listTransactions)
 	fastify.put("/transactions/:id", updateTransaction)
 	fastify.delete("/transactions/:id", deleteTransaction)
 }
