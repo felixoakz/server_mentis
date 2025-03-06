@@ -64,6 +64,7 @@ export async function listTransactions(request: FastifyRequest, reply: FastifyRe
 					eq(TransactionTable.user_id, user.id),
 					eq(TransactionTable.account_id, accountId)
 				))
+			.orderBy(TransactionTable.created_at)
 
 		return reply.send({ transactions })
 
