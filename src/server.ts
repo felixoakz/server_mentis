@@ -6,9 +6,9 @@ import chalk from "chalk";
 
 import { loggingMiddleware } from "./middlewares/loggingMiddleware";
 import { constants } from "configs/constants";
-import accountRoute from "modules/account/accountRoutes";
-import authRoute from "modules/auth/authRoutes";
-import transactionRoute from "modules/transaction/transactionRoutes";
+import accountRoute from "handlers/account/accountRoutes";
+import authRoute from "handlers/auth/authRoutes";
+import transactionRoute from "handlers/transaction/transactionRoutes";
 import cors from "@fastify/cors";
 
 const { cookieSecret, jwtSecret, rateLimit, port } = constants;
